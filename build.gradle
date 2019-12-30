@@ -1,0 +1,49 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+apply plugin: 'groovy'
+apply plugin: 'maven'
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+}
+
+repositories {
+    jcenter()
+    google()
+}
+
+gradle.ext {
+    publishMaven = false   //true 发布Maven仓库，false发布到本地
+}
+
+//archive
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            def versionName = '0.0.1'
+            def version = versionName
+            pom.groupId = 'com.gaojin.viti'
+            pom.artifactId = 'viti'
+            pom.version = version
+            if (!gradle.publishMaven) {
+                println 'upload to local maven path'
+                repository(url: "file://${System.properties['user.home']}/plugins/")
+            } else {
+                println 'upload to remote maven'
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation localGroovy()
+    implementation gradleApi()
+    implementation 'com.android.tools.build:gradle:3.4.0'
+}
